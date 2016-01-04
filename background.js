@@ -18,7 +18,14 @@ chrome.webNavigation.onCompleted.addListener(
         var text    = ' ';
         var parser  = document.createElement('a');
         parser.href = details.url;
-        var found = false;
+        var found   = false;
+
+        chrome.storage.sync.get({
+            domain: '',
+            color: ''
+        }, function(items) {
+            console.log(items);
+        });
 
         //based on hostname, get the text + color for the div
         console.log(parser.hostname);

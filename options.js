@@ -4,12 +4,15 @@
 
 //Save
 function save_config() {
-    var domain = document.getElementById('domain_1').value;
-    var color  = document.getElementById('color_1').value;
+    var values = [];
+
+    $('#config tbody tr').each(function (i, tr) {
+        var inputs = $(tr).find('input');
+        values.push({domain: $(inputs[0]).val(), color: $(inputs[1]).val()});
+    });
 
     chrome.storage.sync.set({
-        domain: domain,
-        color: color
+        values: values
     }, function() {
         // Update status to let user know options were saved.
         var status = document.getElementById('status');
@@ -23,14 +26,47 @@ function save_config() {
 //Restore
 function restore_config() {
     chrome.storage.sync.get({
-        domain: '',
-        color: ''
+        values: []
     }, function(items) {
-        document.getElementById('domain_1').value = items.domain;
-        document.getElementById('color_1').value = items.color;
+        $(items.values).each(function(i, value) {
+            add(value.domain, value.color);
+        });
     });
 }
 
+
+
+//Add an entry
+function add(domain, color) {
+    var tbody = $('#config tbody')[0];
+
+    var tr       = $('<tr/>', {});
+    var tdName   = $('<td/>').appendTo(tr);
+    var tdColor  = $('<td/>').appendTo(tr);
+    var tdButton = $('<td/>').appendTo(tr);
+
+    var nameInput = $('<input/>', {
+        name: 'domain[]',
+        type: 'text',
+        value: domain
+    }).appendTo(tdName);
+    var colorInput = $('<input/>', {
+        name: 'color[]',
+        type: 'text',
+        value: color
+    }).appendTo(tdColor);
+    var button = $('<button/>', {
+        text: "X"
+    }).appendTo(tdButton);
+    tr.appendTo(tbody);
+}
+
+function addEmpty() {
+    add('', '');
+}
+
+
 //listeners
+document.getElementById('add').addEventListener('click', addEmpty);
 document.getElementById('save').addEventListener('click', save_config);
 document.addEventListener('DOMContentLoaded', restore_config);
