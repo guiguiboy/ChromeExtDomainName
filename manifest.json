@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "Domain name alerter",
+  "description": "Have you ever go to your production site and thought you were in a dev environment? Have you ever deleted some data and then realised that, no, you were not on a dev env. This extension provides help for distracted people like me by highlighting the server you re on to avoid mistakes",
+  "version": "1.0",
+  "options_page": "options.html",
+
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "permissions": [
+    "*://*/*",
+    "webNavigation",
+    "storage"
+  ]
+}
