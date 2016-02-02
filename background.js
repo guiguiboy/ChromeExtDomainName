@@ -5,8 +5,38 @@
  * getting started : https://developer.chrome.com/extensions/getstarted
  */
 
-//For better efficiency, url array has to be initialized before listener to avoid useless overhead
+var extDomainName = function(tabId, parser) {
+    this.tabId  = tabId;
+    this.parser = parser;
 
+    /**
+     * Adds a div on the top
+     */
+    this.generateDiv = function(items) {
+        var color   = '';
+        var text    = ' ';
+
+        items.values.forEach(function(element) {
+            var found = false;
+            if (parser.hostname === element.domain) {
+                color = element.color;
+                text  = ' ';
+                found = true;
+            }
+            if (found) {
+                chrome.tabs.executeScript(this.tabId, {
+                    code: "var div = document.createElement('div');" +
+                    "var container = document.getElementsByTagName('html')[0];" +
+                    "div.textContent = '" + text + "';" +
+                    "div.id = 'chrome_ext_domain_name_alerter_div';" +
+                    "div.style.backgroundColor = '" + color + "';" +
+                    "div.style.minHeight = '5px';" +
+                    "container.insertBefore(div, container.firstChild);"
+                });
+            }
+        });
+    };
+};
 
 chrome.webNavigation.onCompleted.addListener(
     function(details) {
@@ -14,43 +44,13 @@ chrome.webNavigation.onCompleted.addListener(
         if (details.frameId !== 0)
             return;
 
-        var color   = '';
-        var text    = ' ';
         var parser  = document.createElement('a');
         parser.href = details.url;
-        var found   = false;
+        var mod = new extDomainName(details.tabId, parser);
 
         chrome.storage.sync.get({
-            domain: '',
-            color: ''
-        }, function(items) {
-            console.log(items);
-        });
-
-        //based on hostname, get the text + color for the div
-        console.log(parser.hostname);
-
-        if (parser.hostname === 'phpsymfony.com') {
-            //@todo : maybe replace with border ? first commit then try and revert if necessary ... 
-            color = 'blue';
-            text  = ' ';
-            found = true;
-        }
-        if (found) {
-            chrome.tabs.executeScript(details.tabId, {
-                code: "var div = document.createElement('div');" +
-                "var body = document.getElementsByTagName('body')[0];" +
-                "div.textContent = '" + text + "';" +
-                "div.id = 'chrome_ext_domain_name_alerter_div';" +
-                "div.style.backgroundColor = '" + color + "';" +
-                "div.style.minHeight = '5px';" +
-                "body.insertBefore(div, body.firstChild);"
-            });
-        }
+            values: {}
+        }, mod.generateDiv
+        );
 }
-/*{
-    url: [{
-        hostContains: 'phpsymfony'
-    }],
-}*/
 );
