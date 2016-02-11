@@ -52,5 +52,9 @@ chrome.webNavigation.onCompleted.addListener(
             values: {}
         }, mod.generateDiv
         );
-}
+}, {
+        url: [{
+            schemes: ['http', 'https']
+        }]
+    }
 );

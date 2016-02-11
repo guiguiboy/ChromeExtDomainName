@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "Domain name alerter",
-  "description": "Have you ever go to your production site and thought you were in a dev environment? Have you ever deleted some data and then realised that, no, you were not on a dev env. This extension provides help for distracted people like me by highlighting the server you re on to avoid mistakes",
+  "description": "Have you ever been to your production site and thought you were in a dev environment? Have you ever deleted some data and then realised that, oh no, you did it in the production ? This extension will not help you recover your lost data (sorry guys, this would require some more work)... But, this extension provides help for distracted people by highlighting the server you re on to avoid mistakes by simply adding a colored border on the top. Simple yet genius.",
   "version": "1.0",
   "options_page": "options.html",
 
@@ -16,7 +16,8 @@
     "matches": [ "*://*/*"]
   }],
   "permissions": [
-    "*://*/*",
+    "http://*/*",
+    "https://*/*",
     "webNavigation",
     "storage",
     "tabs"
